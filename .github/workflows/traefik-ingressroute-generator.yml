@@ -16,6 +16,9 @@ on:
         description: Service of the IngressRoute
         required: true
 
+permissions:
+  contents: write
+
 jobs:
   generate-ingressroute:
     runs-on: ubuntu-latest
@@ -23,7 +26,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: true
       - name: Generate IngressRoute
         run: |
