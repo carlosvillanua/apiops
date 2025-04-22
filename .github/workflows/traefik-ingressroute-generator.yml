@@ -48,7 +48,7 @@ jobs:
             middlewares:
               - name: jwt
                 namespace: traefik
-              - name: opa
+              - name: ratelimit
                 namespace: traefik" > artifacts/$NAME-ingressroute.yaml
       - name: Commit and push file
         env:
