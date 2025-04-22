@@ -41,9 +41,11 @@ jobs:
               - name: jwt
                 namespace: traefik
               - name: opa
-                namespace: traefik" > ingressroute.yaml
-      - name: Upload IngressRoute
-        uses: actions/upload-artifact@v2
-        with:
-          name: ingressroute.yaml
-          path: ingressroute.yaml
+                namespace: traefik" > artifacts/ingressroute.yaml
+      - name: Commit and push file
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add artifacts/ingressroute.yaml
+          git commit -m "Upload ingressroute.yaml"
+          git push
