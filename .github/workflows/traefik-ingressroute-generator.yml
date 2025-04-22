@@ -1,15 +1,28 @@
-name: CRD Generator
+name: Traefik IngressRoute Generator
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      name:
+        description: Name of the IngressRoute
+        required: true
+      namespace:
+        description: Namespace of the IngressRoute
+        required: true
+      route:
+        description: Route of the IngressRoute
+        required: true
+      service:
+        description: Service of the IngressRoute
+        required: true
 
 jobs:
-  generate-crd:
+  generate-ingressroute:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Generate CRD
+      - name: Generate IngressRoute
         run: |
           echo "apiVersion: traefik.io/v1alpha1
           kind: IngressRoute
@@ -28,9 +41,9 @@ jobs:
               - name: jwt
                 namespace: traefik
               - name: opa
-                namespace: traefik" > crd.yaml
-      - name: Upload CRD
+                namespace: traefik" > ingressroute.yaml
+      - name: Upload IngressRoute
         uses: actions/upload-artifact@v2
         with:
-          name: crd.yaml
-          path: crd.yaml
+          name: ingressroute.yaml
+          path: ingressroute.yaml
