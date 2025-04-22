@@ -1,12 +1,7 @@
 name: CRD Generator
 
 on:
-  workflow_dispatch:
-    inputs:
-      name: ${{ github.event.inputs.name }}
-      namespace: ${{ github.event.inputs.namespace }}
-      route: ${{ github.event.inputs.route }}
-      service: ${{ github.event.inputs.service }}
+  workflow_dispatch
 
 jobs:
   generate-crd:
@@ -19,20 +14,20 @@ jobs:
           echo "apiVersion: traefik.io/v1alpha1
           kind: IngressRoute
           metadata:
-            name: $name
-            namespace: $namespace
+            name: ${{ github.event.inputs.name }}
+            namespace: ${{ github.event.inputs.namespace }}
           spec:
             entryPoints:
               - web
             routes:
-              - match: Host(`$route`)
+              - match: Host(`${{ github.event.inputs.route }}`)
                 services:
-                  - name: $service
+                  - name: ${{ github.event.inputs.service }}
                     port: 8000
             middlewares:
               - name: jwt
                 namespace: traefik
-              - name: ratelimit
+              - name: opa
                 namespace: traefik" > crd.yaml
       - name: Upload CRD
         uses: actions/upload-artifact@v2
