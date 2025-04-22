@@ -1,0 +1,41 @@
+name: CRD Generator
+
+on:
+  workflow_dispatch:
+    inputs:
+      name: ${{ github.event.inputs.name }}
+      namespace: ${{ github.event.inputs.namespace }}
+      route: ${{ github.event.inputs.route }}
+      service: ${{ github.event.inputs.service }}
+
+jobs:
+  generate-crd:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Generate CRD
+        run: |
+          echo "apiVersion: traefik.io/v1alpha1
+          kind: IngressRoute
+          metadata:
+            name: $name
+            namespace: $namespace
+          spec:
+            entryPoints:
+              - web
+            routes:
+              - match: Host(`$route`)
+                services:
+                  - name: $service
+                    port: 8000
+            middlewares:
+              - name: jwt
+                namespace: traefik
+              - name: ratelimit
+                namespace: traefik" > crd.yaml
+      - name: Upload CRD
+        uses: actions/upload-artifact@v2
+        with:
+          name: crd.yaml
+          path: crd.yaml
