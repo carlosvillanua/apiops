@@ -45,11 +45,11 @@ jobs:
                 services:
                   - name: ${{ github.event.inputs.service }}
                     port: 8000
-            middlewares:
-              - name: jwt
-                namespace: traefik
-              - name: ratelimit
-                namespace: traefik" > artifacts/$NAME-ingressroute.yaml
+                middlewares:
+                  - name: jwt
+                    namespace: traefik
+                  - name: ratelimit
+                    namespace: traefik" > artifacts/$NAME-ingressroute.yaml
       - name: Commit and push file
         env:
           NAME: ${{ github.event.inputs.name }}
