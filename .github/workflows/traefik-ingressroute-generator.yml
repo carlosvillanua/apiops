@@ -29,6 +29,7 @@ jobs:
           persist-credentials: true
       - name: Generate IngressRoute
         run: |
+          route=${github.event.inputs.route}
           echo "apiVersion: traefik.io/v1alpha1
           kind: IngressRoute
           metadata:
@@ -38,7 +39,7 @@ jobs:
             entryPoints:
               - web
             routes:
-              - match: Host(${github.event.inputs.route})
+              - match: Host($route)
                 services:
                   - name: ${{ github.event.inputs.service }}
                     port: 8000
