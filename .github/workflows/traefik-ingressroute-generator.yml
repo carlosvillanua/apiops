@@ -38,7 +38,7 @@ jobs:
             entryPoints:
               - web
             routes:
-              - match: Host(`${{ github.event.inputs.route }}`)
+              - match: Host(${github.event.inputs.route})
                 services:
                   - name: ${{ github.event.inputs.service }}
                     port: 8000
@@ -46,11 +46,11 @@ jobs:
               - name: jwt
                 namespace: traefik
               - name: opa
-                namespace: traefik" > artifacts/ingressroute.yaml
+                namespace: traefik" > artifacts/${github.event.inputs.name}-ingressroute.yaml
       - name: Commit and push file
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git add artifacts/ingressroute.yaml
-          git commit -m "Upload ingressroute.yaml"
+          git add artifacts/${github.event.inputs.name}-ingressroute.yaml
+          git commit -m "Upload ${github.event.inputs.name}-ingressroute.yaml"
           git push
