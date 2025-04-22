@@ -30,11 +30,12 @@ jobs:
       - name: Generate IngressRoute
         env:
           ROUTE: ${{ github.event.inputs.route }}
+          NAME: ${{ github.event.inputs.name }}
         run: |
           echo "apiVersion: traefik.io/v1alpha1
           kind: IngressRoute
           metadata:
-            name: ${{ github.event.inputs.name }}
+            name: $NAME
             namespace: ${{ github.event.inputs.namespace }}
           spec:
             entryPoints:
@@ -48,11 +49,11 @@ jobs:
               - name: jwt
                 namespace: traefik
               - name: opa
-                namespace: traefik" > artifacts/${github.event.inputs.name}-ingressroute.yaml
+                namespace: traefik" > artifacts/$NAME-ingressroute.yaml
       - name: Commit and push file
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git add artifacts/${github.event.inputs.name}-ingressroute.yaml
-          git commit -m "Upload ${github.event.inputs.name}-ingressroute.yaml"
+          git add artifacts/$NAME-ingressroute.yaml
+          git commit -m "Upload $NAME-ingressroute.yaml"
           git push
