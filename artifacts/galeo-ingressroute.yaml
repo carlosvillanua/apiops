@@ -7,14 +7,13 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`apiops.apigateway.docker.localhost`)
+    - match: Host(`galeo.apigateway.docker.localhost`)
       services:
         - name: httpbin-svc
           port: 8000
       middlewares:
         - name: cache
         - name: secure
-        - name: treblle-observability
         - name: ratelimit
-        - name: waf
-          namespace: traefik-apps
+        - name: treblle-observability
+          namespace: traefik
