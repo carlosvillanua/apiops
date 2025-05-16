@@ -48,10 +48,9 @@ jobs:
                 middlewares:
                   - name: cache
                   - name: secure
-                  - name: treblle-observability
                   - name: ratelimit
-                  - name: waf
-                    namespace: traefik-apps" > artifacts/$NAME-ingressroute.yaml
+                  - name: treblle-observability
+                    namespace: traefik" > artifacts/$NAME-ingressroute.yaml
       - name: Commit and push file
         env:
           NAME: ${{ github.event.inputs.name }}
