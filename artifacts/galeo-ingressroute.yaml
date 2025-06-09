@@ -1,0 +1,19 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: galeo
+  namespace: traefik-apps
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`galeo.apigateway.docker.localhost`)
+      services:
+        - name: httpbin-svc
+          port: 8000
+      middlewares:
+        - name: cache
+        - name: secure
+        - name: ratelimit
+        - name: treblle-observability
+          namespace: traefik
