@@ -12,6 +12,3 @@ spec:
   apiPlan:
     name: httpbin-silver-plan
   weight: 10
-  operationFilter:
-    include:
-      - anything-only
