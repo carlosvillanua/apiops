@@ -1,0 +1,13 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: ManagedApplication
+metadata:
+  name: httpbin-application
+  namespace: apps
+spec:
+  appId: "httpbin-application"
+  owner: "68664d54cf96dfe038a69few"
+  apiKeys:
+    - title: httpbin-apikey
+      value: 82b7d9d51a8422849c34c788a85f92dfa5c7fcc4a2032d236c7994311a03e3f391712bf54a92ec659c3083bd477eeaf08fbae037b3abcbae4639c3349ee1b9ca
+      # echo -n "topsecrettoken" | openssl dgst -shake256 -xoflen 64 | awk '{print $2}' | tr -d '\n'
