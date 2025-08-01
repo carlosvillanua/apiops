@@ -10,24 +10,20 @@ spec:
   trustedUrls:
     - http://portal.httpbin.localhost:8000
 ---
-apiVersion: gateway.networking.k8s.io/v1beta1
-kind: HTTPRoute
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
 metadata:
   name: httpbin-portal
   namespace: apps
   annotations:
     hub.traefik.io/api-portal: httpbin-portal
 spec:
-  parentRefs:
-    - name: web-gateway
-  hostnames:
-    - "portal.httpbin.localhost"
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: "/"
-      backendRefs:
-        - name: apiportal
-          namespace: traefik
-          port: 9903
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`portal.httpbin.localhost`)
+    kind: Rule
+    services:
+    - name: apiportal
+      namespace: traefik
+      port: 9903

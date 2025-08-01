@@ -9,10 +9,12 @@ metadata:
     hub.traefik.io/api-version: httpbin-default
 spec:
   parentRefs:
-    - name: web-gateway
+  - name: traefik-gateway
+    sectionName: web
+    namespace: traefik
   hostnames:
-    - "httpbin.traefik.localhost"
-    - "httpbin.traefik.cloud"
+    - httpbin.traefik.localhost
+    - httpbin.traefik.cloud
   rules:
     - matches:
         - path:
@@ -33,7 +35,9 @@ metadata:
     hub.traefik.io/api-version: httpbin-v2
 spec:
   parentRefs:
-    - name: web-gateway
+  - name: traefik-gateway
+    sectionName: web
+    namespace: traefik
   hostnames:
     - "httpbin.traefik.localhost"
     - "httpbin.traefik.cloud"
