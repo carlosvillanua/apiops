@@ -1,3 +1,12 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-httpbin-prefix
+  namespace: apps
+spec:
+  stripPrefix:
+    prefixes:
+      - "/httpbin"
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -8,7 +17,29 @@ spec:
   headers:
     customRequestHeaders:
       X-Custom-Header: "Hello Traefik"
-
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: ratelimit
+  namespace: apps
+spec:
+  rateLimit:
+    average: 10
+    burst: 100
+    period: 1s
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: keycloak-jwt-authentication
+  namespace: apps
+spec:
+  plugin:
+    jwt:
+      jwksUrl: http://keycloak-service.traefik-security.svc:8080/realms/traefik/protocol/openid-connect/certs
+      forwardHeaders:
+        Group: group
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -42,7 +73,7 @@ spec:
         memory:
           limit: "3Gi"
 
----
+---          
 
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -97,10 +128,61 @@ spec:
   plugin:
     opa:
       policy: |
-        package example.policies
-
-        allow {
-          [_, encoded] := split(input.headers.Authorization, " ")
-          [header, payload, signature] = io.jwt.decode(encoded)
-          payload["email"] == "admin@example.com"
+        package traefik.jwt
+        
+        import rego.v1
+        
+        default allow := false
+        default user_type := "unknown"
+        default user_email := ""
+        default user_groups := []
+        
+        # Extract JWT token from Authorization header
+        token_payload := payload if {
+            [_, encoded] := split(input.headers.Authorization, " ")
+            [_, payload, _] := io.jwt.decode(encoded)
+        }
+        
+        # Extract user information
+        user_type := "service_account" if {
+            token_payload.preferred_username == "service-account-traefik"
+            token_payload.client_id == "traefik"
+        }
+        
+        user_type := "developer" if {
+            token_payload.preferred_username == "developer"
+            "developers" in token_payload.group
+        }
+        
+        user_email := token_payload.email if {
+            token_payload.email
+        }
+        
+        user_groups := token_payload.group if {
+            token_payload.group
+        }
+        
+        # Token validation
+        valid_token if {
+            token_payload.azp == "traefik"
+            token_payload.typ == "Bearer"
+            now := time.now_ns() / 1000000000
+            token_payload.exp > now
+        }
+        
+        # Allow service accounts
+        allow if {
+            valid_token
+            user_type == "service_account"
+            contains(token_payload.iss, "/realms/traefik")
+            "uma_protection" in token_payload.resource_access.traefik.roles
+        }
+        
+        # Allow developers
+        allow if {
+            valid_token
+            user_type == "developer" 
+            contains(token_payload.iss, "/realms/traefik")
+            token_payload.email_verified == true
+            "developers" in token_payload.group
         }

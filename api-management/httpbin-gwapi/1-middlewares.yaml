@@ -41,3 +41,66 @@ spec:
       store:
         memory:
           limit: "3Gi"
+
+---
+
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: opa-spain-geoblocking
+  namespace: apps
+spec:
+  plugin:
+    opa:
+      policy: |
+        package traefik.geoblocking
+        
+        import rego.v1
+        
+        default allow := false
+        default message := "Access denied"
+        
+        # Check multiple possible country headers
+        country_code := code if {
+            code := input.headers["CF-IPCountry"]
+        } else := code if {
+            code := input.headers["CloudFront-Viewer-Country"]  
+        } else := code if {
+            code := input.headers["X-Country-Code"]
+        } else := code if {
+            code := input.headers["X-Forwarded-Country"]
+        } else := ""
+        
+        # Block Spain
+        allow if {
+            country_code != "ES"
+            message := sprintf("Access granted from country: %s", [country_code])
+        }
+        
+        # Explicit denial for Spain
+        deny[msg] if {
+            country_code == "ES"
+            msg := "Access blocked: Spanish IP addresses are not allowed"
+        }
+        
+      forwardHeaders:
+        Country: data.traefik.geoblocking.country_code
+        GeoMessage: data.traefik.geoblocking.message
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: opa-jwt-validation
+  namespace: apps
+spec:
+  plugin:
+    opa:
+      policy: |
+        package example.policies
+
+        allow {
+          [_, encoded] := split(input.headers.Authorization, " ")
+          [header, payload, signature] = io.jwt.decode(encoded)
+          payload["email"] == "admin@example.com"
+        }

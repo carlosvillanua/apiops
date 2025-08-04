@@ -1,0 +1,45 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APIPlan
+metadata:
+  name: httpbin-bronze-plan
+  namespace: apps
+spec:
+  title: "HTTPBin Bronze Plan"
+  description: "Bronze rate limits and quotas"
+  rateLimit:
+    limit: 1
+    period: 1s
+  quota:
+    limit: 100
+    period: 24h
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APIPlan
+metadata:
+  name: httpbin-silver-plan
+  namespace: apps
+spec:
+  title: "HTTPBin Silver Plan"
+  description: "Silver rate limits and quotas"
+  rateLimit:
+    limit: 1
+    period: 1s
+  quota:
+    limit: 100
+    period: 24h
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APIPlan
+metadata:
+  name: httpbin-gold-plan
+  namespace: apps
+spec:
+  title: "HTTPBin Gold Plan"
+  description: "Gold rate limits and quotas"
+  rateLimit:
+    limit: 3
+    period: 5s
+  quota:
+    limit: 100
+    period: 24h

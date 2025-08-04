@@ -1,0 +1,43 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: ManagedApplication
+metadata:
+  name: carlos-application
+  namespace: apps
+spec:
+  appId: "carlos-application"
+  owner: "carlos_traefik"
+  apiKeys:
+    - title: carlos-apikey
+      value: f5d22a2f9a44bd768e84a06c541dcfe6874fc5052d7454055065d466dcd0dd49869f3d6e09e810b86734036605063be1dfcf3cf190b208adb70e93132fee9a1d
+      # echo -n "topsecretapikey" | openssl dgst -shake256 -xoflen 64 | awk '{print $2}' | tr -d '\n'
+
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: ManagedApplication
+metadata:
+  name: amer-application
+  namespace: apps
+spec:
+  appId: "amer-application"
+  owner: "amer_traefik"
+  apiKeys:
+    - title: amer-apikey
+      value: b7d6104c0db14cc362b9ceb9275fb847611aebd7631ff872004250cf5cc869e53efe1a0345adfdf41200b1270cc975e35814e387d97c7bce1d02028768142234
+      # echo -n "amertopsecretapikey" | openssl dgst -shake256 -xoflen 64 | awk '{print $2}' | tr -d '\n'
+
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: ManagedSubscription
+metadata:
+  name: traefik-subscription
+  namespace: apps
+spec:
+  managedApplications:
+    - name: "carlos-application"
+    - name: "amer-application"
+  apis:
+    - name: httpbin-api
+  apiPlan:
+    name: httpbin-gold-plan
+  weight: 10

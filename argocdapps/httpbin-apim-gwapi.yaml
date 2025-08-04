@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: httpbin-gwapi
-  namespace: argocd
+  namespace: traefik-tools
 spec:
   project: default
   source:

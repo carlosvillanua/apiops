@@ -1,0 +1,14 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: ManagedSubscription
+metadata:
+  name: httpbin-subscription
+  namespace: apps
+spec:
+  managedApplications:
+    - name: "httpbin-application"
+  apis:
+    - name: httpbin-api
+  apiPlan:
+    name: httpbin-silver-plan
+  weight: 10

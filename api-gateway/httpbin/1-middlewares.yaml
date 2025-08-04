@@ -1,3 +1,12 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-httpbin-prefix
+  namespace: apps
+spec:
+  stripPrefix:
+    prefixes:
+      - "/httpbin"
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -8,7 +17,30 @@ spec:
   headers:
     customRequestHeaders:
       X-Custom-Header: "Hello Traefik"
-
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: ratelimit
+  namespace: apps
+spec:
+  rateLimit:
+    average: 10
+    burst: 100
+    period: 1s
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: keycloak-jwt-authentication
+  namespace: apps
+spec:
+  plugin:
+    jwt:
+      jwksUrl: http://keycloak-service.traefik-security.svc:8080/realms/traefik/protocol/openid-connect/certs
+      forwardHeaders:
+        Group: group
+        Email: email
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -88,10 +120,11 @@ spec:
         GeoMessage: data.traefik.geoblocking.message
 
 ---
+
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: opa-jwt-validation
+  name: opa-allow-jwt-claim
   namespace: apps
 spec:
   plugin:
@@ -102,5 +135,7 @@ spec:
         allow {
           [_, encoded] := split(input.headers.Authorization, " ")
           [header, payload, signature] = io.jwt.decode(encoded)
-          payload["email"] == "admin@example.com"
+          payload["email"] == "admin@traefik.io"
         }
+      forwardHeaders:
+        Group: data.example.policies.grp
