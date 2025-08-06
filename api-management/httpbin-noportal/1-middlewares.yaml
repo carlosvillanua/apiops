@@ -117,7 +117,7 @@ spec:
       allowedCountries:        # replace with your list var.geoblock_allowed_countries (ISO alpha-2 codes)
         - FR
         - ES
-     #   - NL
+        - NL
       blockedCountries:        # replace with your list var.geoblock_blocked_countries (ISO alpha-2 codes)
         - GB
         - DE
