@@ -17,7 +17,6 @@ spec:
   headers:
     customRequestHeaders:
       X-Custom-Header: "Hello Traefik"
-      CF-IPCountry: "ES"
 
 ---
 apiVersion: traefik.io/v1alpha1
@@ -102,3 +101,32 @@ spec:
         allow {
           email_verified
         }
+
+---
+
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: geoblock-security
+  namespace: traefik
+spec:
+  plugin:
+    geoblock:
+      enabled: true
+      defaultAllow: false      # replace with your var.geoblock_default_allow boolean
+      allowedCountries:        # replace with your list var.geoblock_allowed_countries (ISO alpha-2 codes)
+        - FR
+        - ES
+     #   - NL
+      blockedCountries:        # replace with your list var.geoblock_blocked_countries (ISO alpha-2 codes)
+        - GB
+        - DE
+      allowPrivate: true
+      trustXForwardedFor: true
+      logLevel: DEBUG
+      updateDatabase: true
+      addHeaders:
+        - name: X-GeoIP-Country
+          field: country.iso_code
+        - name: CF-IPCountry
+          field: country.iso_code

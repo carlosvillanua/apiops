@@ -19,8 +19,9 @@ spec:
       middlewares:
         - name: custom-header
         - name: strip-httpbin-prefix
-        - name: opa-allow-jwt-claim
         - name: ratelimit
+        - name: geoblock-security
+          namespace: traefik
 ---
 apiVersion: hub.traefik.io/v1alpha1
 kind: API
@@ -36,3 +37,4 @@ spec:
       servers:
         - url: http://httpbin.traefik.localhost:8000/
         - url: http://httpbin.traefik.cloud/
+     
