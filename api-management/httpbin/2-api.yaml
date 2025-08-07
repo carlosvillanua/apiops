@@ -12,7 +12,7 @@ spec:
     - web
   routes:
     - kind: Rule
-      match: Host(`httpbin.traefik.localhost`) || Host(`httpbin.traefik.cloud`) && PathPrefix(`/v1`)
+      match: Host(`httpbin.traefik.localhost`) || Host(`httpbin.traefik.cloud`) && PathPrefix(`/httpbin/v1`)
       services:
         - name: httpbin-svc
           namespace: apps
@@ -33,7 +33,7 @@ spec:
     - web
   routes:
     - kind: Rule
-      match: (Host(`httpbin.traefik.localhost`) || Host(`httpbin.traefik.cloud`)) && PathPrefix(`/v2`)
+      match: (Host(`httpbin.traefik.localhost`) || Host(`httpbin.traefik.cloud`)) && PathPrefix(`/httpbin/v2`)
       services:
         - name: httpbin-svc
           namespace: apps
