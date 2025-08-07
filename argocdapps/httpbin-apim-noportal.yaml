@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/carlosvillanua/apiops.git
     targetRevision: HEAD
-    path: api-management/httpbinnoportal
+    path: api-management/httpbin-noportal
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:
