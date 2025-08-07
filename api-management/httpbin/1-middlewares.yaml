@@ -1,3 +1,12 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-httpbin-prefix
+  namespace: apps
+spec:
+  stripPrefix:
+    prefixes:
+      - "/httpbin"
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -9,6 +18,30 @@ spec:
     customRequestHeaders:
       X-Custom-Header: "Hello Traefik"
 
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: ratelimit
+  namespace: apps
+spec:
+  rateLimit:
+    average: 10
+    burst: 100
+    period: 1s
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: keycloak-jwt-authentication
+  namespace: apps
+spec:
+  plugin:
+    jwt:
+      jwksUrl: http://keycloak-service.traefik-security.svc:8080/realms/traefik/protocol/openid-connect/certs
+      forwardHeaders:
+        Group: group
+        Email: email
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -47,60 +80,53 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: opa-spain-geoblocking
+  name: opa-allow-jwt-claim
   namespace: apps
 spec:
   plugin:
     opa:
+      allow: "data.opa.feedback.allow"
       policy: |
-        package traefik.geoblocking
+        package opa.feedback
         
-        import rego.v1
-        
-        default allow := false
-        default message := "Access denied"
-        
-        # Check multiple possible country headers
-        country_code := code if {
-            code := input.headers["CF-IPCountry"]
-        } else := code if {
-            code := input.headers["CloudFront-Viewer-Country"]  
-        } else := code if {
-            code := input.headers["X-Country-Code"]
-        } else := code if {
-            code := input.headers["X-Forwarded-Country"]
-        } else := ""
-        
-        # Block Spain
-        allow if {
-            country_code != "ES"
-            message := sprintf("Access granted from country: %s", [country_code])
+        default allow = false
+        encoded = split(input.headers["Authorization"], " ")[1]
+        payload = io.jwt.decode(encoded)[1]
+
+        # Check if user has verified their email
+        email_verified {
+          payload["email_verified"] == true
         }
-        
-        # Explicit denial for Spain
-        deny[msg] if {
-            country_code == "ES"
-            msg := "Access blocked: Spanish IP addresses are not allowed"
+
+        allow {
+          email_verified
         }
-        
-      forwardHeaders:
-        Country: data.traefik.geoblocking.country_code
-        GeoMessage: data.traefik.geoblocking.message
 
 ---
+
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: opa-jwt-validation
-  namespace: apps
+  name: geoblock-security
+  namespace: traefik
 spec:
   plugin:
-    opa:
-      policy: |
-        package example.policies
-
-        allow {
-          [_, encoded] := split(input.headers.Authorization, " ")
-          [header, payload, signature] = io.jwt.decode(encoded)
-          payload["email"] == "admin@example.com"
-        }
+    geoblock:
+      enabled: true
+      defaultAllow: false      # replace with your var.geoblock_default_allow boolean
+      allowedCountries:        # replace with your list var.geoblock_allowed_countries (ISO alpha-2 codes)
+        - FR
+        - ES
+        - NL
+      blockedCountries:        # replace with your list var.geoblock_blocked_countries (ISO alpha-2 codes)
+        - GB
+        - DE
+      allowPrivate: true
+      trustXForwardedFor: true
+      logLevel: DEBUG
+      updateDatabase: true
+      addHeaders:
+        - name: X-GeoIP-Country
+          field: country.iso_code
+        - name: CF-IPCountry
+          field: country.iso_code

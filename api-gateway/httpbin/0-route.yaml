@@ -17,7 +17,5 @@ spec:
       middlewares:
         - name: strip-httpbin-prefix
         - name: keycloak-jwt-authentication
-   #     - name: opa-allow-jwt-claim
-   #     - name: opa-spain-geoblocking
         - name: ratelimit
 
