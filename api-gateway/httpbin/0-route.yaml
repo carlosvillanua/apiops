@@ -18,4 +18,6 @@ spec:
         - name: strip-httpbin-prefix
         - name: keycloak-jwt-authentication
         - name: ratelimit
+      #  - name: ipallowlist
+        - name: waf
 

@@ -1,0 +1,38 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APICatalogItem
+metadata:
+  name: httpbin-bronze-plan
+  namespace: apps
+spec:
+  everyone: true
+  apis:
+    - name: httpbin-api
+  apiPlan:
+    name: httpbin-bronze-plan
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APICatalogItem
+metadata:
+  name: httpbin-silver-plan
+  namespace: apps
+spec:
+  groups:
+    - developers
+  apis:
+    - name: httpbin-api
+  apiPlan:
+    name: httpbin-silver-plan
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APICatalogItem
+metadata:
+  name: httpbin-gold-plan
+  namespace: apps
+spec:
+  groups:
+    - admins
+  apis:
+    - name: httpbin-api
+  apiPlan:
+    name: httpbin-gold-plan

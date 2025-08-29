@@ -7,6 +7,9 @@ spec:
   stripPrefix:
     prefixes:
       - "/httpbin"
+      - "/v1"
+      - "/v2"
+      
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -26,8 +29,9 @@ metadata:
   namespace: apps
 spec:
   rateLimit:
-    average: 2
-    period: 3s
+    average: 10
+    burst: 100
+    period: 1s
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -129,40 +133,3 @@ spec:
           field: country.iso_code
         - name: CF-IPCountry
           field: country.iso_code
-
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: ipallowlist
-  namespace: apps
-spec:
-  ipAllowList:
-    sourceRange:
-      - 127.0.0.1/32
-      - 192.168.1.7
-
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: content-guard
-  namespace: apps
-spec:
-  plugin:
-    content-guard:
-      engine:
-        presidio:
-          host: http://presidio.traefik-ai.svc:3000
-          language: en
-      request:
-        rules:
-          - jsonPaths:
-              - ".instances[]"
-            mask:
-              char: "*"
-            entities:
-              - PERSON
-              - PHONE_NUMBER
-              - LOCATION
-              - CREDIT_CARD
