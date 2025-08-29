@@ -47,7 +47,7 @@ spec:
   description: "HTTPBin API OpenAPI spec"
   release: v1.0.0
   openApiSpec:
-    url: https://raw.githubusercontent.com/carlosvillanua/apiops/refs/heads/main/api-management/httpbin_versioning_deprecation/httpbin_v1_OAS.json
+    url: https://raw.githubusercontent.com/carlosvillanua/apiops/refs/heads/main/api-management/httpbin_versioning_deprecation/httpbin_v1_OAS.yaml
     override:
       servers:
         - url: http://httpbin.traefik.localhost:8000/
@@ -81,7 +81,7 @@ spec:
   description: "HTTPBin API OpenAPI spec"
   release: v2.0.0
   openApiSpec:
-    url: https://raw.githubusercontent.com/carlosvillanua/apiops/refs/heads/main/api-management/httpbin_versioning_deprecation/httpbin_v2_OAS.json
+    url: https://raw.githubusercontent.com/carlosvillanua/apiops/refs/heads/main/api-management/httpbin_versioning_deprecation/httpbin_v2_OAS.yaml
     override:
       servers:
         - url: http://httpbin.traefik.localhost:8000/
