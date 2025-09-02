@@ -6,17 +6,20 @@ metadata:
   namespace: apps
   annotations:
     hub.traefik.io/api: httpbin-api
-    hub.traefik.io/api-version: httpbin-default
+    hub.traefik.io/api-version: httpbin-v1
 spec:
   entryPoints:
     - web
   routes:
     - kind: Rule
-      match: Host(`httpbin.traefik.localhost`) || Host(`httpbin.traefik.cloud`)
+      match: Host(`httpbin.traefik.localhost`) && PathPrefix (`/v1`)
       services:
         - name: httpbin-svc
           namespace: apps
           port: 8000
+      middlewares:
+        - name: strip-httpbin-prefix
+        - name: waf
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
@@ -31,31 +34,30 @@ spec:
     - web
   routes:
     - kind: Rule
-      match: (Host(`httpbin.traefik.localhost`) || Host(`httpbin.traefik.cloud`)) && Header(`X-API-Version`, `v2`)
+      match: Host(`httpbin.traefik.localhost`) && PathPrefix(`/v2`)
       services:
         - name: httpbin-svc
           namespace: apps
           port: 8000
+      middlewares:
+        - name: strip-httpbin-prefix
+        - name: headers
+        - name: waf
 ---
 apiVersion: hub.traefik.io/v1alpha1
 kind: APIVersion
 metadata:
-  name: httpbin-default
+  name: httpbin-v1
   namespace: apps
 spec:
   title: "HTTPBin API"
   description: "HTTPBin API OpenAPI spec"
   release: v1.0.0
   openApiSpec:
-    url: https://raw.githubusercontent.com/carlosvillanua/apiops/refs/heads/main/api-management/httpbin_versioning_deprecation/httpbin_v1_OAS.yaml
+    url: https://raw.githubusercontent.com/carlosvillanua/apiops/refs/heads/main/api-management/httpbin_versioning_deprecation/oas/httpbin_v1_OAS.yaml
     override:
       servers:
-        - url: http://httpbin.traefik.localhost:8000/
-        - url: http://httpbin.traefik.cloud/
-    operationSets:
-      - name: default
-        matchers:
-          - pathPrefix: /
+        - url: http://httpbin.traefik.localhost:8000/v1
   cors:
     allowHeadersList:
       - "*"
@@ -81,17 +83,10 @@ spec:
   description: "HTTPBin API OpenAPI spec"
   release: v2.0.0
   openApiSpec:
-    url: https://raw.githubusercontent.com/carlosvillanua/apiops/refs/heads/main/api-management/httpbin_versioning_deprecation/httpbin_v2_OAS.yaml
+    url: https://raw.githubusercontent.com/carlosvillanua/apiops/refs/heads/main/api-management/httpbin_versioning_deprecation/oas/httpbin_v2_OAS.yaml
     override:
       servers:
-        - url: http://httpbin.traefik.localhost:8000/
-        - url: http://httpbin.traefik.cloud/
-    operationSets:
-      - name: anything-only
-        matchers:
-          - pathPrefix: /anything
-            methods:
-              - GET
+        - url: http://httpbin.traefik.localhost:8000/v2
   cors:
     allowHeadersList:
       - "*"
@@ -116,5 +111,5 @@ spec:
   title: "HTTPBin API"
   description: "HTTPBin API OpenAPI spec"
   versions:
-    - name: httpbin-default
+    - name: httpbin-v1
     - name: httpbin-v2

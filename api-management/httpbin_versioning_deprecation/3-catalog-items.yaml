@@ -8,10 +8,6 @@ spec:
   everyone: true
   apis:
     - name: httpbin-api
-  operationFilter:
-    include:
-      - anything-only
-      - default
   apiPlan:
     name: httpbin-bronze-plan
 ---
@@ -25,9 +21,6 @@ spec:
     - developers
   apis:
     - name: httpbin-api
-  operationFilter:
-    include:
-      - anything-only
   apiPlan:
     name: httpbin-silver-plan
 ---
@@ -41,9 +34,5 @@ spec:
     - admins
   apis:
     - name: httpbin-api
-  operationFilter:
-    include:
-      - anything-only
-      - everything
   apiPlan:
     name: httpbin-gold-plan
