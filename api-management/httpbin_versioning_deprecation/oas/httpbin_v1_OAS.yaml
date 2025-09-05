@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  version: '1.0'
+  version: '2.0'
   title: Brunel
   description: An unofficial OpenAPI definition for [httpbin.org](https://httpbin.org).
 servers:
@@ -93,7 +93,6 @@ paths:
         - HTTP methods
       summary: |
         Returns the GET request's data. Accepts any query parameters and any headers.
-      deprecated: true
       parameters:
         - $ref: '#/components/parameters/freeFormQuery'
       responses:
