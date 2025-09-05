@@ -1,0 +1,11 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APICatalogItem
+metadata:
+  name: httpbin-bronze-plan
+  namespace: apps
+spec:
+  everyone: true
+  apis:
+    - name: httpbin-api
+

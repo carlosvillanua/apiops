@@ -39,4 +39,6 @@ spec:
         - SecRequestBodyAccess On
         - SecRequestBodyLimit 13107200
         - SecRequestBodyLimitAction Reject
+        - SecRule REQUEST_HEADERS:Content-Type "^application/json" "id:200001,phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=JSON"
         - SecRule ARGS_NAMES "@streq glossary_id" "id:1003,phase:2,deny,log,status:400,msg:'Blocked glossary_id'"
+        - SecRule ARGS:json.glossary_id "@rx .*" "id:1004,phase:2,deny,log,status:400,msg:'Blocked glossary_id in JSON body'"
