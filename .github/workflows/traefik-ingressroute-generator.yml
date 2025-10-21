@@ -49,7 +49,7 @@ jobs:
                   - name: strip-raspberrypi-prefix
                   - name: keycloak-jwt-authentication
                   - name: waf
-                    namespace: traefik" > artifacts/$NAME-ingressroute.yaml
+                    namespace: apps" > artifacts/$NAME-ingressroute.yaml
       - name: Commit and push file
         env:
           NAME: ${{ github.event.inputs.name }}
