@@ -50,7 +50,7 @@ jobs:
                   - name: keycloak-jwt-authentication
                   - name: waf
                   - name: ratelimit
-                    namespace: apps" > artifacts/$NAME-ingressroute.yaml
+                    namespace: apps" > artifacts_terraform/$NAME-ingressroute.yaml
       - name: Commit and push file
         env:
           NAME: ${{ github.event.inputs.name }}
