@@ -44,12 +44,12 @@ jobs:
               - match: Host($ROUTE)
                 services:
                   - name: ${{ github.event.inputs.service }}
-                    port: 8000
+                    port: 3002
                 middlewares:
-                  - name: cache
-                  - name: secure
-                  - name: ratelimit
-                  - name: treblle-observability
+                  - name: strip-raspberrypi-prefix
+                  - name: keycloak-jwt-authentication
+                  - name: waf
+                  - name: opa-allow-jwt-claim
                     namespace: traefik" > artifacts/$NAME-ingressroute.yaml
       - name: Commit and push file
         env:
