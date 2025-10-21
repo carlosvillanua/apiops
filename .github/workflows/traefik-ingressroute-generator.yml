@@ -41,7 +41,7 @@ jobs:
             entryPoints:
               - web
             routes:
-              - match: Host($ROUTE)
+              - match: PathPrefix($ROUTE)
                 services:
                   - name: ${{ github.event.inputs.service }}
                     port: 3002
