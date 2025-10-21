@@ -9,7 +9,7 @@ spec:
   routes:
     - match: PathPrefix(`/apiaddicts`)
       services:
-        - name: raspberry-svc
+        - name: raspberrypi-svc
           port: 3002
       middlewares:
         - name: strip-raspberrypi-prefix
