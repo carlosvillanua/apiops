@@ -49,7 +49,6 @@ jobs:
                   - name: strip-raspberrypi-prefix
                   - name: keycloak-jwt-authentication
                   - name: waf
-                  - name: opa-allow-jwt-claim
                     namespace: traefik" > artifacts/$NAME-ingressroute.yaml
       - name: Commit and push file
         env:
