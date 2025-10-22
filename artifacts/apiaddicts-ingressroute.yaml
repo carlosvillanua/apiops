@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: apiaddicts
+  namespace: apps
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: PathPrefix(`/apiaddicts`)
+      services:
+        - name: raspberrypi-svc
+          port: 3002
+      middlewares:
+        - name: strip-raspberrypi-prefix
+        - name: keycloak-jwt-authentication
+        - name: waf
+          namespace: apps
