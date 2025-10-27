@@ -16,7 +16,7 @@ spec:
           port: 8000
       middlewares:
         - name: strip-httpbin-prefix
-      #  - name: keycloak-jwt-authentication
-      #  - name: ratelimit
-      #  - name: waf
+        - name: keycloak-jwt-authentication
+        - name: ratelimit
+        - name: waf
 
