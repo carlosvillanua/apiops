@@ -50,13 +50,13 @@ jobs:
                   - name: keycloak-jwt-authentication
                   - name: waf
                   - name: ratelimit
-                    namespace: apps" > artifacts_terraform/$NAME-ingressroute.yaml
+                    namespace: apps" > artifacts_apiops/$NAME-ingressroute.yaml
       - name: Commit and push file
         env:
           NAME: ${{ github.event.inputs.name }}
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git add artifacts_terraform/$NAME-ingressroute.yaml
+          git add artifacts_apiops/$NAME-ingressroute.yaml
           git commit -m "Upload $NAME-ingressroute.yaml"
           git push
