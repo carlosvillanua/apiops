@@ -1,4 +1,4 @@
-name: Traefik IngressRoute Generator Terraform
+name: Traefik IngressRoute Generator APIOps
 
 on:
   workflow_dispatch:
