@@ -516,6 +516,15 @@ paths:
       responses:
         '200':
           description: OK
+  /cookies/test:
+    get:
+      tags:
+        - Cookies
+      parameters:
+        - $ref: '#/components/parameters/freeFormQuery'
+      responses:
+        '200':
+          description: OK
 components:
   schemas:
     CommonResponse:
